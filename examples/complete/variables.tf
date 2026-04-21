@@ -271,6 +271,16 @@ variable "postrender_binary_path" {
   default     = null
 }
 
+variable "set" {
+  type = list(object({
+    name  = string
+    value = string
+    type  = string
+  }))
+  description = "Value block with custom values to be merged with the values yaml."
+  default     = []
+}
+
 ### EKS Addons
 variable "addons" {
   type = list(object({

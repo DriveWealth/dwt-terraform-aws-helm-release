@@ -37,10 +37,12 @@ module "helm_release" {
 
   eks_cluster_oidc_issuer_url = module.eks_cluster.eks_cluster_identity_oidc_issuer
 
-  atomic          = var.atomic
-  cleanup_on_fail = var.cleanup_on_fail
-  timeout         = var.timeout
-  wait            = var.wait
+  atomic                = var.atomic
+  cleanup_on_fail       = var.cleanup_on_fail
+  timeout               = var.timeout
+  wait                  = var.wait
+  postrender_binary_path = var.postrender_binary_path
+  set                    = var.set
 
   values = [
     file("${path.module}/values.yaml")

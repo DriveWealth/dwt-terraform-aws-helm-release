@@ -76,3 +76,13 @@ cleanup_on_fail = true
 timeout = 300
 
 wait = true
+
+postrender_binary_path = "./postrender-noop.sh"
+
+set = [
+  {
+    name  = "logLevel"
+    value = "info"
+    type  = "string"
+  }
+]
