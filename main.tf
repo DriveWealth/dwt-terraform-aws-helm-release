@@ -108,40 +108,22 @@ resource "helm_release" "this" {
   wait                       = var.wait
   wait_for_jobs              = var.wait_for_jobs
 
-  dynamic "set" {
-    for_each = var.set
-    content {
-      name  = set.value["name"]
-      value = set.value["value"]
-      type  = set.value["type"]
-    }
-  }
+  set = concat(
+    var.set,
+    local.iam_role_enabled && var.service_account_role_arn_annotation_enabled ? [
+      {
+        name  = var.service_account_set_key_path
+        value = module.eks_iam_role.service_account_role_arn
+        type  = "string"
+      }
+    ] : []
+  )
 
-  dynamic "set_sensitive" {
-    for_each = var.set_sensitive
-    content {
-      name  = set_sensitive.value["name"]
-      value = set_sensitive.value["value"]
-      type  = set_sensitive.value["type"]
-    }
-  }
+  set_sensitive = var.set_sensitive
 
-  dynamic "set" {
-    for_each = local.iam_role_enabled && var.service_account_role_arn_annotation_enabled ? [module.eks_iam_role.service_account_role_arn] : []
-    content {
-      name  = var.service_account_set_key_path
-      value = set.value
-      type  = "string"
-    }
-  }
-
-  dynamic "postrender" {
-    for_each = var.postrender_binary_path != null ? [1] : []
-
-    content {
-      binary_path = var.postrender_binary_path
-    }
-  }
+  postrender = var.postrender_binary_path != null ? {
+    binary_path = var.postrender_binary_path
+  } : null
 
   depends_on = [
     module.eks_iam_role,
